@@ -204,11 +204,11 @@ class CommandSeparater():
             )
 
     @staticmethod
-    def format_command_mouse_click(formatted_time:timedelta, x, y, milli_second:int=0) -> str:
+    def format_command_mouse_click(formatted_time:timedelta, button, x, y, milli_second:int=0) -> str:
         return CommandSeparater.fomat_command(
             elapsed_time=formatted_time,
             command=ControlCommand.MOUSE_CLICK,
-            args=f'{ControlSubCommand.MOUSE_CURSOR_ACTION_MOVE} {x} {y} {milli_second}'
+            args=f'{button} {x} {y} {milli_second}'
             )
 
     @staticmethod
