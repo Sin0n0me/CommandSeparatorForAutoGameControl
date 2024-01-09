@@ -18,6 +18,14 @@ class ControlCommand(Enum):
     IF = 'if'
     ELSE = 'else'
     FI = 'fi'
+    
+    @staticmethod
+    def is_valid_command(command:str) -> bool:
+        for i in ControlCommand:
+            if i.value == command:
+                return True
+        
+        return False
 
 class ControlSubCommand(Enum):
     MOUSE_CURSOR_ACTION_MOVE = 'Move'
@@ -69,15 +77,7 @@ class CommandSeparater():
         start_time, command, args = CommandSeparater.get_command(line)        
         if not command:
             return False
-        return CommandSeparater.is_valid_command(command)
-
-    @staticmethod 
-    def is_valid_command(command:str):        
-        for i in ControlCommand:
-            if i.value == command:
-                return True
-        
-        return False
+        return ControlCommand.is_valid_command(command)
     
     @staticmethod 
     def split_time(line:str):
@@ -151,12 +151,12 @@ class CommandSeparater():
         return f'{minutes:02}:{seconds:05.2f}'
 
     @staticmethod
-    def fomat_command(elapsed_time:timedelta, command:str, args:str):
-        formatted_time = CommandSeparater.format_time(elapsed_time)        
-        return f'{formatted_time};{command}:{args}'
+    def fomat_command(elapsed_time:timedelta, command:ControlCommand, args:str) -> str:
+        formatted_time = CommandSeparater.format_time(elapsed_time)
+        return f'{formatted_time};{command.value}:{args}'
 
     @staticmethod
-    def format_command_key_down(formatted_time:str, key, milli_second:int=0):
+    def format_command_key_down(formatted_time:str, key, milli_second:int=0) -> str:
         if isinstance(key, pynput.keyboard.Key):
             command = ControlCommand.SPECIAL_KEY_DOWN
             press_key = key.name
@@ -177,7 +177,7 @@ class CommandSeparater():
             )
 
     @staticmethod
-    def format_command_mouse_move(formatted_time:timedelta, x, y):
+    def format_command_mouse_move(formatted_time:timedelta, x, y) -> str:
         return CommandSeparater.fomat_command(
             elapsed_time=formatted_time,
             command=ControlCommand.MOUSE_CURSOR,
@@ -185,7 +185,7 @@ class CommandSeparater():
             )
 
     @staticmethod
-    def format_command_mouse_click(formatted_time:timedelta, x, y, milli_second:int=0):
+    def format_command_mouse_click(formatted_time:timedelta, x, y, milli_second:int=0) -> str:
         return CommandSeparater.fomat_command(
             elapsed_time=formatted_time,
             command=ControlCommand.MOUSE_CLICK,
@@ -193,7 +193,7 @@ class CommandSeparater():
             )
 
     @staticmethod
-    def format_command_gamepad_button(formatted_time:timedelta, button, milli_second:int=0):        
+    def format_command_gamepad_button(formatted_time:timedelta, button, milli_second:int=0) -> str:
         return CommandSeparater.fomat_command(
             elapsed_time=formatted_time,
             command=ControlCommand.GAMEPAD_BUTTON,
@@ -201,7 +201,7 @@ class CommandSeparater():
             )
 
     @staticmethod
-    def format_command_gamepad_joystick(formatted_time:timedelta, stick_num, x, y):
+    def format_command_gamepad_joystick(formatted_time:timedelta, stick_num, x, y) -> str:
         return CommandSeparater.fomat_command(
             elapsed_time=formatted_time,
             command=ControlCommand.GAMEPAD_STICK,
