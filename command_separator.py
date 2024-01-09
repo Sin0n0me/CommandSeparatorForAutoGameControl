@@ -119,25 +119,41 @@ class CommandSeparater():
 
     @staticmethod
     def get_gamepad_button_args(args:str):
-        button = args.split()[0]
+        button = args.strip().split()[0]
         duration = args.split()[-1] if len(args.split()) > 1 else 0        
         return (button, int(duration))
 
     @staticmethod
     def get_gamepad_joystick_args(args:str):
-        button, x, y = args.split()
+        button, x, y = args.strip().split()
         return (button, float(x), float(y))
 
     @staticmethod
-    def get_key_args(command:str, args:str):
-        key = args.split()[0]                                                   # 押下するキーの切り抜き
-        modify_keys = [] if command.find('+') == -1 else command.split('+')[1:] # 装飾キーの切り抜き
-        duration = args.split()[-1] if len(args.split()) > 1 else 0             # 押下時間のチェック
+    def get_key_args(args:str):
+        keys = args.strip().split()[0]
+        COMBINATION_IDENTIFIER = '+'
+        
+        # 押下するキーの切り抜き
+        identifire_pos = keys.find(COMBINATION_IDENTIFIER)
+        if identifire_pos == -1:
+            key = keys
+            modify_keys = []
+        # 修飾キーの切り抜き
+        elif identifire_pos == 0:
+            key = COMBINATION_IDENTIFIER
+            modify_keys = [] if keys[1:].find(COMBINATION_IDENTIFIER) else keys[1:].split(COMBINATION_IDENTIFIER)[1:]        
+        else:
+            keys = keys.split(COMBINATION_IDENTIFIER)
+            key = keys[0]
+            modify_keys = keys[1:]
+        
+        # 押下時間のチェック
+        duration = args.split()[-1] if len(args.split()) > 1 else 0
         return (key, modify_keys, int(duration))
 
     @staticmethod
     def get_mouse_cursor_args(args:str):
-        split_args = args.split()
+        split_args = args.strip().split()
         action, x, y = split_args[:3]
         duration = split_args[3] if len(split_args) > 3 else 0
         duration = int(duration) / 1000        
