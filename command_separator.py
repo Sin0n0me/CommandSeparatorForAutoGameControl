@@ -118,27 +118,30 @@ class CommandSeparater():
         return args    
 
     @staticmethod
+    def get_gamepad_button_args(args:str):
+        button = args.split()[0]
+        duration = args.split()[-1] if len(args.split()) > 1 else 0        
+        return (button, int(duration))
+
+    @staticmethod
+    def get_gamepad_joystick_args(args:str):
+        button, x, y = args.split()
+        return (button, float(x), float(y))
+
+    @staticmethod
     def get_key_args(command:str, args:str):
-        # 押下するキーの切り抜き
-        key = args.split()[0]
-
-        # 装飾キーの切り抜き
-        modify_keys = [] if command.find('+') == -1 else command.split('+')[1:]    
-
-        # 押下時間のチェック
-        duration = args.split()[-1] if len(args.split()) > 1 else None        
-        
-        return (key, modify_keys, duration)
+        key = args.split()[0]                                                   # 押下するキーの切り抜き
+        modify_keys = [] if command.find('+') == -1 else command.split('+')[1:] # 装飾キーの切り抜き
+        duration = args.split()[-1] if len(args.split()) > 1 else 0             # 押下時間のチェック
+        return (key, modify_keys, int(duration))
 
     @staticmethod
     def get_mouse_cursor_args(args:str):
         split_args = args.split()
         action, x, y = split_args[:3]
-        x, y = int(x), int(y)
         duration = split_args[3] if len(split_args) > 3 else 0
-        duration = int(duration) / 1000
-        
-        return (action, x, y, duration)
+        duration = int(duration) / 1000        
+        return (action, int(x), int(y), int(duration))
         
     @staticmethod
     def format_time(elapsed_time:timedelta) -> str:
